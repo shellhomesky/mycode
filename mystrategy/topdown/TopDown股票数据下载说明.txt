@@ -1,0 +1,44 @@
+TopDown v1.0使用说明
+
+TopDat金融数据包与TopDown开源下载程序
+	TopDat极宽金融数据包，原名zwDat，是国内首个Tick级别的大型开源金融数据包。
+	TopDown极宽A股票数据下载程序，原名zwDown，是专门用于下载A股历史数据和实盘数据的开源程序。
+	TopDat、	TopDown作为zwDat、zwDown的升级版本，在以下方面做了重大优化：
+		@ 数据根目录，改为zdat，原来是zwDat。
+		@ 优先使用tusahre的新的k函数接口，数据下载更加稳定。
+	  @ 简化程序设计，用户调用更加简单。 
+		@ 新增外汇、黄金、白银Tick历史数据包。
+		@ 新增BTC比特币等数字货币历史数据包。
+		
+基于TensorFlow等深度学习平台的需要，在业界首次推出多种规格的金融数据，神经网络模型训练、测试、验证数据集。
+
+------------	
+	使用前，请设置好zDat的目录结构，在TopDown\data\目录下有个zDat目录结构的图片，以及有个空的zDat目录，可以复制硬盘到根目录
+	使用时，最好把TopDown程序复制到zdat数据目录下，同时，zdat和zwPython位于同一个硬盘，并保证硬盘有10G以上的空闲空间。    
+	
+	
+------------	
+	用户下载最新A股数据，可以使用以下程序，下载前请自行更新Tushare到最新版本，使用新的数据服务器，速度快很多：
+  	tdown_cnSTK_base.py，股票基础数据下载，包括股票代码，分类，新数据保存在tmp目录，请大家自己复制到\zDat\inx\、\zDat\top_down\inx\目录
+  	tdown_cnSTK_inx.py，指数日线数据下载，
+  	tdown_real.py，实时数据下载，下载当天的分时数据
+		tdown_cnSTK.py，股票日线数据下载
+		tdown_cnMin.py，股票分时数据下载，默认是5分钟分时数据，tushare新的k函数接口使用腾讯服务器，只能提供最近40天左右的分时数据，需要每个月定时更新。
+		tdown_cnTick.py，股票Tick数据下载，因为tushare新版本Tick数据下载，还是使用原来的新浪服务器，会定时屏蔽下载数据，目前实盘意义不大，仅供学习演示
+	
+------------
+为提高下载速度，TopDown提供了一组Mtrd高速下载程序，可提高10-16倍的下载速度。
+Mtrd高速下载程序，包括一个py源码和两组批命令程序。
+	mcn100.bat，主程序，最好通过zwPython的WinPython Command Prompt.exe程序，进入dos命令行，再调用
+	mcn010.bat，MTrd下载批命令子程序
+	mtrd010,.py，MTrd下载Python子程序
+  mtrd默认使用python3.62，其他python运行环境，请参考mcn010.bat，修改python.exe程序的实际路径
+------------
+其他文件是TopQuant模块库文件。
+更多资料，请参看源码和《零起点Python量化》系列丛书的相关章节。
+
+
+【下载地址】
+最新网盘下载地址请参见极宽网站下载中心：
+http://TopQuant.vip/forum.php?mod=viewthread&tid=7
+http://ziwang.com/forum.php?mod=viewthread&tid=7

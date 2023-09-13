@@ -1,0 +1,131 @@
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>91b1a1ba-3d7f-48da-a2bb-7bdedda06fe9</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>10年400倍策略(附视频逐行代码讲解)\code\select_stocks.py</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <Name>tushareqt</Name>
+    <RootNamespace>tushareqt</RootNamespace>
+    <InterpreterId>Global|ContinuumAnalytics|Anaconda39-64</InterpreterId>
+    <IsWindowsApplication>False</IsWindowsApplication>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+    <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="10年400倍策略%28附视频逐行代码讲解%29\code\select_stocks.py" />
+    <Compile Include="DC.py" />
+    <Compile Include="Init_StockALL_Sp.py" />
+    <Compile Include="MACD顶底背离代码\1_计算顶底背离_指数.py" />
+    <Compile Include="MACD顶底背离代码\1_计算顶底背离_股票.py" />
+    <Compile Include="MACD顶底背离代码原版\1_计算顶底背离_指数.py" />
+    <Compile Include="MACD顶底背离代码原版\1_计算顶底背离_股票.py" />
+    <Compile Include="mybacktrader.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="SVM.py" />
+    <Compile Include="北向资金编程代码讲解\北向资金数据处理.py" />
+    <Compile Include="北向资金编程代码讲解\北向资金数据处理_循环版.py" />
+    <Compile Include="后十基金次年表现代码\main.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="10年400倍策略%28附视频逐行代码讲解%29\" />
+    <Folder Include="10年400倍策略%28附视频逐行代码讲解%29\.idea\" />
+    <Folder Include="10年400倍策略%28附视频逐行代码讲解%29\.idea\inspectionProfiles\" />
+    <Folder Include="10年400倍策略%28附视频逐行代码讲解%29\code\" />
+    <Folder Include="10年400倍策略%28附视频逐行代码讲解%29\data\" />
+    <Folder Include="MACD顶底背离代码\" />
+    <Folder Include="MACD顶底背离代码\.idea\" />
+    <Folder Include="MACD顶底背离代码\.idea\inspectionProfiles\" />
+    <Folder Include="MACD顶底背离代码\股票数据\" />
+    <Folder Include="MACD顶底背离代码原版\" />
+    <Folder Include="MACD顶底背离代码原版\.idea\" />
+    <Folder Include="MACD顶底背离代码原版\.idea\inspectionProfiles\" />
+    <Folder Include="MACD顶底背离代码原版\股票数据\" />
+    <Folder Include="北向资金编程代码讲解\" />
+    <Folder Include="后十基金次年表现代码\" />
+    <Folder Include="后十基金次年表现代码\.idea\" />
+    <Folder Include="后十基金次年表现代码\.idea\inspectionProfiles\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="10年400倍策略%28附视频逐行代码讲解%29\.idea\.gitignore" />
+    <Content Include="10年400倍策略%28附视频逐行代码讲解%29\.idea\inspectionProfiles\profiles_settings.xml" />
+    <Content Include="10年400倍策略%28附视频逐行代码讲解%29\.idea\misc.xml" />
+    <Content Include="10年400倍策略%28附视频逐行代码讲解%29\.idea\modules.xml" />
+    <Content Include="10年400倍策略%28附视频逐行代码讲解%29\.idea\workspace.xml" />
+    <Content Include="10年400倍策略%28附视频逐行代码讲解%29\.idea\量化小讲堂20：10年400倍策略%28附视频逐行代码讲解%29.iml" />
+    <Content Include="10年400倍策略%28附视频逐行代码讲解%29\data\output.csv" />
+    <Content Include="10年400倍策略%28附视频逐行代码讲解%29\data\stock_data.csv" />
+    <Content Include="10年400倍策略%28附视频逐行代码讲解%29\data\stock_data_sample.csv" />
+    <Content Include="10年400倍策略%28附视频逐行代码讲解%29\个人微信.jpg" />
+    <Content Include="10年400倍策略%28附视频逐行代码讲解%29\公众号.jpg" />
+    <Content Include="MACD顶底背离代码\.idea\encodings.xml" />
+    <Content Include="MACD顶底背离代码\.idea\inspectionProfiles\profiles_settings.xml" />
+    <Content Include="MACD顶底背离代码\.idea\misc.xml" />
+    <Content Include="MACD顶底背离代码\.idea\modules.xml" />
+    <Content Include="MACD顶底背离代码\.idea\workspace.xml" />
+    <Content Include="MACD顶底背离代码\.idea\新建文件夹.iml" />
+    <Content Include="MACD顶底背离代码\sh000300.csv" />
+    <Content Include="MACD顶底背离代码\股票数据\sh600000.csv" />
+    <Content Include="MACD顶底背离代码\股票数据\sh600001.csv" />
+    <Content Include="MACD顶底背离代码\股票数据\sh600002.csv" />
+    <Content Include="MACD顶底背离代码\股票数据\sh600003.csv" />
+    <Content Include="MACD顶底背离代码\股票数据\sh600004.csv" />
+    <Content Include="MACD顶底背离代码\股票数据\sh600005.csv" />
+    <Content Include="MACD顶底背离代码\股票数据\sh600006.csv" />
+    <Content Include="MACD顶底背离代码原版\.idea\encodings.xml" />
+    <Content Include="MACD顶底背离代码原版\.idea\inspectionProfiles\profiles_settings.xml" />
+    <Content Include="MACD顶底背离代码原版\.idea\misc.xml" />
+    <Content Include="MACD顶底背离代码原版\.idea\modules.xml" />
+    <Content Include="MACD顶底背离代码原版\.idea\workspace.xml" />
+    <Content Include="MACD顶底背离代码原版\.idea\新建文件夹.iml" />
+    <Content Include="MACD顶底背离代码原版\sh000300.csv" />
+    <Content Include="MACD顶底背离代码原版\股票数据\sh600000.csv" />
+    <Content Include="MACD顶底背离代码原版\股票数据\sh600001.csv" />
+    <Content Include="MACD顶底背离代码原版\股票数据\sh600002.csv" />
+    <Content Include="MACD顶底背离代码原版\股票数据\sh600003.csv" />
+    <Content Include="MACD顶底背离代码原版\股票数据\sh600004.csv" />
+    <Content Include="MACD顶底背离代码原版\股票数据\sh600005.csv" />
+    <Content Include="MACD顶底背离代码原版\股票数据\sh600006.csv" />
+    <Content Include="北向资金编程代码讲解\hgt_hist_data.csv" />
+    <Content Include="北向资金编程代码讲解\sgt_hist_data.csv" />
+    <Content Include="北向资金编程代码讲解\sh000300.csv" />
+    <Content Include="北向资金编程代码讲解\邢不行公众号.jpg" />
+    <Content Include="北向资金编程代码讲解\邢不行微信.jpg" />
+    <Content Include="后十基金次年表现代码\.DS_Store" />
+    <Content Include="后十基金次年表现代码\.idea\.gitignore" />
+    <Content Include="后十基金次年表现代码\.idea\encodings.xml" />
+    <Content Include="后十基金次年表现代码\.idea\inspectionProfiles\profiles_settings.xml" />
+    <Content Include="后十基金次年表现代码\.idea\misc.xml" />
+    <Content Include="后十基金次年表现代码\.idea\modules.xml" />
+    <Content Include="后十基金次年表现代码\.idea\workspace.xml" />
+    <Content Include="后十基金次年表现代码\.idea\邢不行：后十基金次年表现代码.iml" />
+    <Content Include="后十基金次年表现代码\2008-2021基金收益率数据.csv" />
+    <Content Include="后十基金次年表现代码\指数涨跌幅.csv" />
+    <Content Include="后十基金次年表现代码\排名数据.csv" />
+    <Content Include="后十基金次年表现代码\邢不行公众号.jpg" />
+    <Content Include="后十基金次年表现代码\邢不行微信号.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|ContinuumAnalytics|Anaconda39-64" />
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
+  <!-- Uncomment the CoreCompile target to enable the Build command in
+       Visual Studio and specify your pre- and post-build commands in
+       the BeforeBuild and AfterBuild targets below. -->
+  <!--<Target Name="CoreCompile" />-->
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+</Project>
