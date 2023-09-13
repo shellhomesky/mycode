@@ -10,7 +10,7 @@ framerate = 160000  # 采样率
 num_samples = 2000  # 采样点
 channels = 1  # 声道
 sampwidth = 2  # 采样宽度 2bytes
-FILEPATH = 'speech.wav'  # 设置语音文件保存位置
+FILEPATH = '../data/speech.wav'  # 设置语音文件保存位置
 base_url = "https://openapi.baidu.com/oauth/2.0/token?grant_type=client_credentials&client_id=%s&client_secret=%s"
 APIKey = "eyzfnUmvEGS2P7XsGm3WQ4Pd"
 SecretKey = "4uuEqKSbmLkkQWyY7Yrp3DWgrc7sLIg5"
@@ -90,7 +90,7 @@ if __name__ == '__main__':
     while flag.lower() == 'y':
         print('请输入数字选择语言：')
         devpid = input('1536：普通话(简单英文),1537:普通话(有标点),1737:英语,1637:粤语,1837:四川话\n')
-        my_record()
+        # my_record()
         TOKEN = getToken(HOST)
         speech = get_audio(FILEPATH)
         result = speech2text(speech, TOKEN, int(devpid))
