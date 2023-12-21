@@ -1,9 +1,10 @@
-import torch
-import torch.nn.functional as F
 import pandas as pd
+import torch
+from torch.utils.data import DataLoader
+import torch.nn.functional as F
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import StandardScaler
 from torch.autograd import Variable
 
 
@@ -133,12 +134,12 @@ if __name__ == '__main__':
     epochs = 1000
     X_train, y_train, X_test, y_test = get_data()
     dataset = Dataset(X_train, y_train)
-    train_dataloader = torch.utils.data.DataLoader(dataset=dataset,
+    train_dataloader = DataLoader(dataset=dataset,
                                                    batch_size=i_batch_size,
                                                    shuffle=True,
                                                    drop_last=True)
     test_dataset = torch.utils.data.TensorDataset(X_test, y_test)
-    test_dataloader = torch.utils.data.DataLoader(dataset=test_dataset,
+    test_dataloader = DataLoader(dataset=test_dataset,
                                                   batch_size=i_batch_size,
                                                   shuffle=False,
                                                   drop_last=True)

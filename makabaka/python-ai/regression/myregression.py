@@ -1,5 +1,6 @@
 import pandas as pd
 import torch
+from torch.utils.data import DataLoader
 import torch.nn.functional as F
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
@@ -25,7 +26,7 @@ def get_data():
     encoder.fit(y)
     y = encoder.transform(y)
     # 将数据分为训练集和测试集
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.05, random_state=7)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=7)
     # 对特征进行规范化或标准化。 这在数据具有不同范围时非常有用。
     X_train = torch.FloatTensor(X_train)
     y_train = torch.LongTensor(y_train)
@@ -63,7 +64,13 @@ class Model(torch.nn.Module):
 
 
 def train_loop(dataloader, model, lossfn, optimizer, epoch):
+    global trainbst_acc
     size = len(dataloader.dataset)
+    num_batches = len(dataloader)
+    correct = 0
+    trainbst_acc = 0
+    train_loss = 0
+    train_correct = 0
     model.train()
     for batch, (X_data, y_data) in enumerate(dataloader):
         # 前向传播
@@ -77,27 +84,50 @@ def train_loop(dataloader, model, lossfn, optimizer, epoch):
         # 梯度置零
         optimizer.zero_grad()
         if batch % 10 == 0:
-            loss, current = loss.item(), (batch + 1) * len(X_data)
-            acc = (pred.argmax(dim=1) == y_data).sum().item() / len(y_data)
-            print(f"Epoch:{epoch},batch:{batch},loss: {loss:>7f}   [{current:>5d}/{size:>5d}],acc:{acc}")
-        # print(epoch,loss,acc)
+            predicted = torch.max(pred.data, 1)[1]
+            correct += (predicted == y_data).sum()
+            current = (batch + 1) * len(X_data)
+            losspic = loss.item()
+            train_loss += losspic
+            correctpic = (pred.argmax(dim=1) == y_data).sum().item()
+            train_correct += correctpic
+            print(f"Epoch:{epoch},batch:{batch},loss: {losspic:>8f}   [{current:>5d}/{size:>5d}],每批准确率:{correctpic/len(X_data)},累计准确率:{float(correct)}/{float(len(X_data) * (batch + 1))}={float(correct) / float(len(X_data) * (batch + 1))}")
+    train_loss /= num_batches
+    train_correct /= size
+    # 保存最好的模型
+    if train_correct > trainbst_acc:
+        trainbst_acc = train_correct
+    print(model.state_dict().keys())
+    # 保存模型权重
+    torch.save(model.state_dict(), 'model_parameter.pt')
+    # 保存完整模型
+    torch.save(model, 'best_model.pt')
+    print(f"Train result: \n Accuracy: {(100 * train_correct):>0.4f}%, Avg loss: {train_loss:>8f} \n")
 
 
 def test_loop(dataloader, model, lossfn):
-    model.eval()
+    global testbst_acc
+    global best_model
     size = len(dataloader.dataset)
     num_batches = len(dataloader)
+    testbst_acc = 0
     test_loss = 0
-    correct = 0
+    test_correct = 0
+    model.eval()
     with torch.no_grad():
         for X_data, y in dataloader:
             X_data, y = Variable(X_data, volatile=True), Variable(y)
-            pred = model(X_data)
-            test_loss += loss_fn(pred, y).item()
-            correct += (pred.argmax(1) == y).type(torch.float).sum().item()
-        test_loss /= num_batches
-        correct /= size
-        print(f"Test Error: \n Accuracy: {(100 * correct):>0.1f}%, Avg loss: {test_loss:>8f} \n")
+            pred = model.forward(X_data)
+            test_loss += lossfn(pred, y).item()
+            test_correct += (pred.argmax(1) == y).type(torch.float).sum().item()
+    test_loss /= num_batches
+    test_correct /= size
+    # 保存最好的模型
+    if test_correct > testbst_acc:
+        testbst_acc = test_correct
+        best_model = model
+        print(model.state_dict().keys())
+    print(f"Test result: \n Accuracy: {(100 * test_correct):>0.4f}%, Avg loss: {test_loss:>8f} \n")
 
 
 def myloop(dataloader, model, lossfn):
@@ -110,7 +140,7 @@ def myloop(dataloader, model, lossfn):
         for X_data, target in dataloader:
             X_data, target = Variable(X_data, volatile=True), Variable(target)
             pred = model(X_data)
-            test_loss += F.cross_entropy(pred, target, size_average=False).item()
+            test_loss += lossfn(pred, target, size_average=False).item()
             pred = pred.data.max(1, keepdim=True)[1]
             correct += pred.eq(target.data.view_as(pred)).cpu().sum()
         test_loss /= len(test_dataloader.dataset)
@@ -122,25 +152,33 @@ def myloop(dataloader, model, lossfn):
 if __name__ == '__main__':
     i_batch_size = 64
     learning_rate = 1e-3
-    epochs = 100
+    epochs = 10
     X_train, y_train, X_test, y_test = get_data()
-    dataset = Dataset(X_train, y_train)
-    train_dataloader = torch.utils.data.DataLoader(dataset=dataset,
-                                                   batch_size=i_batch_size,
-                                                   shuffle=True,
-                                                   drop_last=True)
-    test_dataset = torch.utils.data.TensorDataset(X_test, y_test)
-    test_dataloader = torch.utils.data.DataLoader(dataset=test_dataset,
-                                                  batch_size=i_batch_size,
-                                                  shuffle=False,
-                                                  drop_last=True)
+    train_dataset = Dataset(X_train, y_train)
+    train_dataloader = DataLoader(dataset=train_dataset,
+                                  batch_size=i_batch_size,
+                                  shuffle=True,
+                                  drop_last=True)
+    # test_dataset = torch.utils.data.TensorDataset(X_test, y_test)
+    test_dataset = Dataset(X_test, y_test)
+    test_dataloader = DataLoader(dataset=test_dataset,
+                                 batch_size=i_batch_size,
+                                 shuffle=False,
+                                 drop_last=True)
     model = Model()
     optimizer_fn = torch.optim.Adam(model.parameters(), lr=learning_rate)
     loss_fn = torch.nn.CrossEntropyLoss()
     for i_epoch in range(epochs):
         print(f"Epoch {i_epoch + 1}-------------------------------")
         train_loop(train_dataloader, model, loss_fn, optimizer_fn, i_epoch + 1)
-        # test_loop(test_dataloader, model, loss_fn)
-    torch.save(model, '../data/6.model')
-    # model = torch.load('./data/5.model')
-    # myloop()
+        trainbst_acc = 0
+        testbst_acc = 0
+        best_model = Model()
+        test_loop(test_dataloader, model, loss_fn)
+    # 保存模型权重
+    torch.save(model.state_dict(), 'model_parameter.pt')
+    # 保存完整模型
+    torch.save(model, 'best_model.pt')
+    # torch.save(model, '../data/6.model')
+    # model_test = torch.load('../data/6.model')
+    # test_loop(test_dataloader, model_test, loss_fn)
