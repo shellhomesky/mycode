@@ -24,7 +24,7 @@ for item in stock_dzjy_mrmx_df.itertuples():
     print(item[3])
     df = pd.concat([df, stock_zh_a_hist_df], ignore_index=True)
 stock_zh_a_hist_df =pd.merge(stock_dzjy_mrmx_df,df,left_on="证券代码",right_on="code")
-stock_zh_a_hist_df=stock_zh_a_hist_df.loc[pd.to_datetime(stock_zh_a_hist_df["日期"])<=ts.date()+pd.offsets.BDay(3)]
+stock_zh_a_hist_df=stock_zh_a_hist_df.loc[pd.to_datetime(stock_zh_a_hist_df["日期"])<=stock_zh_a_hist_df.date()+pd.offsets.BDay(3)]
 stock_zh_a_hist_df = stock_zh_a_hist_df .sort_values(by="收盘",ascending=False).groupby("证券代码").apply(lambda x:x.head(1))
 stock_zh_a_hist_df["涨跌幅"]=(stock_zh_a_hist_df["收盘"]-stock_zh_a_hist_df["收盘价"])/stock_zh_a_hist_df["收盘价"]
 print(0)

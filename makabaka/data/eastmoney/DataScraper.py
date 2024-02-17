@@ -124,8 +124,10 @@ class DataScraper:
 
 
 if __name__ == '__main__':
-    scraper = DataScraper()
+    # scraper = DataScraper()
     # scraper.run()
-stock_balance_sheet_by_yearly_em_df = ak.stock_balance_sheet_by_yearly_em(symbol="SH600519")
-stock_balance_sheet_by_yearly_em_df.to_csv('1.csv',index=False,encoding='utf_8_sig')
-print(1)
+# stock_balance_sheet_by_yearly_em_df = ak.stock_balance_sheet_by_yearly_em(symbol="SH600519")
+# stock_balance_sheet_by_yearly_em_df.to_csv('1.csv',index=False,encoding='utf_8_sig')
+    stock_intraday_sina_df = ak.stock_intraday_em(symbol="sz300798",date="20240104")
+    stock_intraday_sina_df.to_csv('1.csv',index=False,encoding='utf_8_sig')
+# print(1)
