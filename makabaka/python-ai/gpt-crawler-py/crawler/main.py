@@ -28,8 +28,8 @@ def add_url(url):
 # Function to get page HTML
 async def get_page_html(page, selector):
     # await page.wait_for_selector(selector)
-    elements = await page.query_selector_all(selector)
-    # return await element.inner_text() if element else ""
+    elements =page.locator(selector)
+    return await elements.inner_text() if elements else ""
 
 
 # Crawl function
@@ -54,8 +54,8 @@ async def crawl(config):
                 if re.search(config.htmlmatch, url):
                     html = await get_page_html(page, config.selector)
                     results.append({'url': url, 'html': html})
-                    with open(config.output_file_name, 'w') as f:
-                        json.dump(results, f, indent=2)
+                    with open(config.output_file_name, 'w',encoding="utf-8") as f:
+                        json.dump(results, f, ensure_ascii=False)
 
                 # Extract and enqueue links
                 links = await page.query_selector_all("a")
@@ -76,8 +76,8 @@ async def crawl(config):
 # Main function
 async def main(config):
     results = await crawl(config)
-    with open(config.output_file_name, 'w') as f:
-        json.dump(results, f, indent=2)
+    with open(config.output_file_name, 'w',encoding="utf-8") as f:
+        json.dump(results, f, ensure_ascii=False,indent=2)
 
 
 # Running the main function
@@ -87,7 +87,7 @@ if __name__ == "__main__":
         url="https://www.chinaacc.com/zyssfg/",
         Homematch="((http|https|ftp):)|(w{3})",
         urlmatch="https://www.chinaacc.com/zyssfg/|https://www.chinaacc.com/zcms/|https://www.chinaacc.com/new/|https://www.chinaacc.com/faguiku",
-        htmlmatch="[^index](.*).shtml|[^index](.*).htm|[^index](.*).html",
+        htmlmatch="^((?!index).)*(html)$|^((?!index).)*(shtml)$|^((?!index).)*(htm)$",
         selector=".news.clearfix",
         max_pages_to_crawl=10,
         output_file_name="output.json"
@@ -95,3 +95,5 @@ if __name__ == "__main__":
     red = redis.Redis(host='127.0.0.1', port=6379, db=0)
     red.delete('shell-urlset')
     asyncio.run(main(config))
+# ^(tou)((?!zj).)*(?<!jw)$ 包括tou,不包括，不包括jw
+# ^(tou)((?!zj).)*(jw)$ 包括tou,不包括，包括jw
