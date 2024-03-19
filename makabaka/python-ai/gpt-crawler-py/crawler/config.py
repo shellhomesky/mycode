@@ -1,8 +1,12 @@
 # Configuration equivalent to config.ts
 class Config:
-    def __init__(self, url, match, selector, max_pages_to_crawl, output_file_name, cookie=None, on_visit_page=None):
+    def __init__(self, Url, url, Homematch, urlmatch, htmlmatch, selector, max_pages_to_crawl, output_file_name,
+                 cookie=None, on_visit_page=None):
+        self.Url = Url
         self.url = url
-        self.match = match
+        self.Homematch = Homematch
+        self.urlmatch = urlmatch
+        self.htmlmatch = htmlmatch
         self.selector = selector
         self.max_pages_to_crawl = max_pages_to_crawl
         self.output_file_name = output_file_name
