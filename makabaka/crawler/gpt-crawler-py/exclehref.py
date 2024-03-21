@@ -1,10 +1,9 @@
-import asyncio
 import hashlib
 import json
 import re
 
 import redis
-from playwright.async_api import async_playwright
+from playwright.sync_api import sync_playwright
 
 from config import Config
 
@@ -25,44 +24,45 @@ def add_url(url):
 
 
 # Function to get page HTML
-async def get_page_html(page, selector):
-    # await page.wait_for_selector(selector)
+def get_page_html(page, selector):
+    elements_text = page.locator(selector).all_inner_texts()
     text = ''
-    elements_text = await page.locator(selector).all_text_contents()
     for element_text in elements_text:
         text = text + element_text
-    return text if text else ""
+    return text
 
 
 # Crawl function
-async def crawl(config):
+def crawl(config):
     results = []
     queue = [config.url]
 
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=False)
-        page = await browser.new_page()
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=False)
+        page = browser.new_page()
 
         if config.cookie:
-            await page.context.add_cookies([{
+            page.context.add_cookies([{
                 "name": config.cookie['name'],
                 "value": config.cookie['value'], "url": config.url}])
 
         try:
             while queue and len(results) < config.max_pages_to_crawl:
-                url = queue.pop(-1)
+                url = queue.pop(0)
                 print(f"Crawler: Crawling {url}")
-                await page.goto(url)
+                page.goto(url)
                 if re.search(config.htmlmatch, url):
-                    html = await get_page_html(page, config.selector)
+                    html = get_page_html(page, config.selector)
                     results.append({'url': url, 'html': html})
                     with open(config.output_file_name, 'w', encoding="utf-8") as f:
                         json.dump(results, f, ensure_ascii=False)
 
                 # Extract and enqueue links
-                links = await page.query_selector_all("a")
+                links = page.query_selector_all("a")
                 for link in links:
-                    href = await link.get_attribute("href")
+                    href = link.get_attribute("href")
+                    if not href:
+                        href = ""
                     if not re.search(config.Homematch, href):
                         href = config.Url + href
                     if href and re.match(config.urlmatch, href) and add_url(href):
@@ -70,14 +70,14 @@ async def crawl(config):
 
                 # Implement on_visit_page logic if needed
         finally:
-            await browser.close()
+            browser.close()
 
     return results
 
 
 # Main function
-async def main(config):
-    results = await crawl(config)
+def main(config):
+    results = crawl(config)
     with open(config.output_file_name, 'w', encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
 
@@ -85,17 +85,17 @@ async def main(config):
 # Running the main function
 if __name__ == "__main__":
     config = Config(
-        Url="https://www.chinaacc.com",
-        url="https://www.chinaacc.com/zyssfg/",
+        Url="https://cmis.cicpa.org.cn",
+        url="https://cmis.cicpa.org.cn/#/login-comprehensiveEvaluation?id=7dba3d77-2519-4222-a900-8d3ab3f64767",
         Homematch="((http|https|ftp):)|(w{3})",
-        urlmatch="https://www.chinaacc.com/zyssfg/|https://www.chinaacc.com/zcms/|https://www.chinaacc.com/new/|https://www.chinaacc.com/faguiku",
-        htmlmatch="^((?!index).)*(html)$|^((?!index).)*(shtml)$|^((?!index).)*(htm)$",
-        selector=".news.clearfix",
+        urlmatch="login-comprehensiveEvaluation",
+        htmlmatch="login-comprehensiveEvaluation",
+        selector="//html/body/div[1]/div/div[2]/div/div[1]/div[1]/table/tr",
         max_pages_to_crawl=10,
         output_file_name="output.json"
     )
     red = redis.Redis(host='127.0.0.1', port=6379, db=0)
     red.delete('shell-urlset')
-    asyncio.run(main(config))
+    main(config)
 # ^(tou)((?!zj).)*(?<!jw)$ 包括tou,不包括，不包括jw
 # ^(tou)((?!zj).)*(jw)$ 包括tou,不包括，包括jw
