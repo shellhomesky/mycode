@@ -12,3 +12,4 @@ class Config:
         self.output_file_name = output_file_name
         self.cookie = cookie
         self.on_visit_page = on_visit_page
+

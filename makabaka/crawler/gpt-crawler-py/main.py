@@ -56,9 +56,6 @@ async def crawl(config):
                 if re.search(config.htmlmatch, url):
                     html = await get_page_html(page, config.selector)
                     results.append({'url': url, 'html': html})
-                    with open(config.output_file_name, 'w', encoding="utf-8") as f:
-                        json.dump(results, f, ensure_ascii=False)
-
                 # Extract and enqueue links
                 links = await page.query_selector_all("a")
                 for link in links:
