@@ -5,7 +5,7 @@ import re
 
 import redis
 import xlwings as xw
-from playwright.async_api import async_playwright
+from playwright.sync_api import sync_playwright
 
 from config import Config
 
@@ -34,9 +34,11 @@ def add_url(url):
 
 
 # Function to get page HTML
-async def get_page_html(page, selector):
-    await page.wait_for_selector(selector)
-    elements_text = await page.locator(selector).all_inner_texts()
+def get_page_html(page, selector):
+    # page.wait_for_selector(selector+"/tr[4]/td[4]", state='visible')
+    # page.wait_for_load_state("networkidle")
+    # page.wait_for_timeout(3000)
+    elements_text = page.locator(selector + "/tr").all_inner_texts()
     text = []
     for element_text in elements_text:
         text = text + element_text.split("\t")
@@ -44,43 +46,47 @@ async def get_page_html(page, selector):
 
 
 # Crawl function
-async def crawl(config):
+def crawl(config):
     results = []
     queue = ls_data
 
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
-        page = await browser.new_page()
-
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=False)
+        context = browser.new_context()
+        page = context.new_page()
+        i = 0
         if config.cookie:
-            await page.context.add_cookies([{
+            page.context.add_cookies([{
                 "name": config.cookie['name'],
                 "value": config.cookie['value'], "url": config.url}])
 
         try:
             while queue and len(results) < config.max_pages_to_crawl:
                 url = queue.pop(0)
-                print(f"Crawler: Crawling {url}")
-                await page.goto(url)
-                if re.search(config.htmlmatch, url):
-                    html = await get_page_html(page, config.selector)
+                i = i + 1
+                print(f"Crawler: Crawling {i}:{url}")
+                page.goto(url)
+                page.reload()
+                page.wait_for_load_state("networkidle")
+                if re.search(config.htmlmatch, page.url):
+                    html = get_page_html(page, config.selector)
                     results.append(html)
         finally:
-            await browser.close()
+            browser.close()
     return results
 
 
 # Main function
-async def main(config):
-    results = await crawl(config)
+def main(config):
+    results = crawl(config)
     for j in range(len(results)):
-        sh2(j + 1, 14).value = results[j][1]
-        sh2(j + 1, 15).value = results[j][3]
-        sh2(j + 1, 16).value = results[j][5]
-        sh2(j + 1, 17).value = results[j][7]
-        sh2(j + 1, 18).value = results[j][9]
-        sh2(j + 1, 19).value = results[j][11]
-        sh2(j + 1, 20).value = results[j][13]
+        sh2[j + 1, 14].value = results[j][1]
+        sh2[j + 1, 15].value = results[j][3]
+        sh2[j + 1, 16].value = results[j][5]
+        sh2[j + 1, 17].value = results[j][7]
+        sh2[j + 1, 18].value = results[j][9]
+        sh2[j + 1, 19].value = results[j][11]
+        sh2[j + 1, 20].value = results[j][13]
     with open(config.output_file_name, 'w', encoding="utf-8") as f:
         json.dump(results, f, ensure_ascii=False, indent=2)
 
@@ -89,35 +95,29 @@ async def main(config):
 if __name__ == "__main__":
     config = Config(
         Url="https://cmis.cicpa.org.cn",
-        url="https://www.chinaacc.com/zyssfg/",
+        url="https://www.cicpa.org.cn/",
         Homematch="((http|https|ftp):)|(w{3})",
         urlmatch="login-comprehensiveEvaluation",
         htmlmatch="login-comprehensiveEvaluation",
-        selector="//html/body/div[1]/div/div[2]/div/div[1]/div[1]/table/tr",
+        selector="//html/body/div[1]/div/div[2]/div/div[1]/div[1]/table",
         max_pages_to_crawl=10,
-        output_file_name="output.json"
+        output_file_name="../data/output.json"
     )
     red = redis.Redis(host='127.0.0.1', port=6379, db=0)
     red.delete('shell-urlset')
-    path = '../data/中注协2022.xlsx'
+    path = '../data/中注协2021.xlsx'
     app = xw.App(visible=True, add_book=False)
     wb = app.books.open(path)
     sh1 = wb.sheets['Table 1']
     sh2 = wb.sheets[1]
-    rng = sh2.range('a1').expand('table')
-    nrowsd = rng.rows.count
-    ncolsd = rng.columns.count
-    a = sh2[0, :ncolsd - 1].value
-    sh2[0, :ncolsd - 1].value = a
     nrows = sh1.used_range.last_cell.row
-    ncolumns = sh1.used_range.last_cell.column
     ls_data = []
     is_key = []
     for i in range(nrows - 1):
         ls_data.append(sh1[i + 1, 9].hyperlink.replace("%23", "#"))
 
-    # app.kill()  # 终止进程，强制退出。
+    main(config)
+    app.kill()  # 终止进程，强制退出。
     # app.quit()  # 在不保存的情况下，退出excel程序。
-    asyncio.run(main(config))
 # ^(tou)((?!zj).)*(?<!jw)$ 包括tou,不包括，不包括jw
 # ^(tou)((?!zj).)*(jw)$ 包括tou,不包括，包括jw
